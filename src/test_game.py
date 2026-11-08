@@ -13,7 +13,7 @@ screen = pygame.display.set_mode((sm.SCREEN_WIDTH, sm.SCREEN_HEIGHT))
 clock = pygame.time.Clock()
 
 # load level
-platforms, coins, enemies, player_start, world_width, world_height = sm.load_level()
+platforms, coins, enemies, mushrooms, mushroom_bricks, fire_flowers, fire_flower_bricks, stars, star_bricks, enemy_xy, player_start, world_width, world_height = sm.load_level()
 player = sm.Player(*player_start)
 lives = player.lives
 camera_x = 0
@@ -28,7 +28,14 @@ for _ in range(120):
     # simulate player moving right
     player.vx = player.speed
     player.facing = 1
-    player.update(platforms, coins, enemies, world_width)
+    player.update(platforms, coins, enemies, mushrooms, mushroom_bricks, fire_flowers, fire_flower_bricks, stars, star_bricks, world_width)
+    player.update_fireballs(platforms, enemies)
+    for m in mushrooms:
+        m.update(platforms)
+    for f in fire_flowers:
+        f.update()
+    for s in stars:
+        s.update(platforms)
     for e in enemies:
         e.update(platforms, world_width)
 
@@ -50,6 +57,8 @@ print('Player on_ground:', player.on_ground)
 print('Player lives:', player.lives)
 print('Coins collected:', player.coins)
 print('Enemies alive:', sum(1 for e in enemies if e.alive))
+print('Fire flowers:', len(fire_flowers))
+print('Stars:', len(stars))
 print('SIMULATION_SUCCESS')
 
 pygame.quit()
